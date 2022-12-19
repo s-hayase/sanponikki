@@ -7,8 +7,7 @@ const helmet = require('helmet');
 const session = require('express-session');
 const passport = require('passport');
 const TwitterStrategy = require('passport-twitter').Strategy;
-const TWITTER_CONSUMER_KEY = "4bmMrONjyQCmsayMqLViLNrNf";
-const TWITTER_CONSUMER_SECRET = "cewgRyZ4WTdfz40imo92zuCbTcB8SaKcRT7hn3XXmMa45yoYGC";
+const config = require('./config');
 
 var app = express();
 app.use(helmet());
@@ -22,12 +21,13 @@ passport.deserializeUser(function (obj, done) {
 });
 
 passport.use(new TwitterStrategy({
-  consumerKey: TWITTER_CONSUMER_KEY,
-  consumerSecret: TWITTER_CONSUMER_SECRET,
-  callbackURL: "http://localhost:8000/auth/twitter/callback"
+  consumerKey: config.twitter.consumerKey,
+  consumerSecret: config.twitter.consumerSecret,
+  callbackURL: config.twitter.callbackURL
 },
-function(token, tokenSecret, profile, done) {
+function (accessToken, refreshToken, profile, done) {
   process.nextTick(function () {
+    console.log(profile);
     return done(null, profile);
   });
 }
@@ -38,7 +38,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 const loginRouter = require('./routes/login');
 const logoutRouter = require('./routes/logout');
 
