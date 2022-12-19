@@ -6,6 +6,23 @@ var logger = require('morgan');
 const helmet = require('helmet');
 const session = require('express-session');
 const passport = require('passport');
+
+// モデルの読み込み
+const User = require('./models/user');
+const Content = require('./models/content');
+const Diary = require('./models/diary');
+const Step = require('./models/step');
+
+User.sync().then(async () => {
+  Diary.belongsTo(User, {foreignKey: 'userId'});
+  Diary.sync();
+  Content.belongsTo(Diary, {foreignKey: 'diaryId'});
+  Content.sync();
+  Step.belongsTo(Diary, {foreignKey: 'diaryId'});
+  Step.sync();
+});
+
+
 const TwitterStrategy = require('passport-twitter').Strategy;
 const config = require('./config');
 
@@ -26,9 +43,12 @@ passport.use(new TwitterStrategy({
   callbackURL: config.twitter.callbackURL
 },
 function (accessToken, refreshToken, profile, done) {
-  process.nextTick(function () {
-    console.log(profile);
-    return done(null, profile);
+  process.nextTick(async function () {
+    await User.upsert({
+      userId: profile.id,
+      username: profile.username
+    });
+    done(null, profile);
   });
 }
 ));
