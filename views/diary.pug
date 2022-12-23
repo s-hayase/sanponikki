@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}
+  if user
+     p 現在 #{user.displayName} でログイン中
+     a(href="/users") マイページ
+     div
+     - var hasDiary = diaries.length > 0
+     if hasDiary
+       h3 日記一覧
+       table.table
+         tr
+           th 日時
+           th 歩数
+         each diary in diaries
+           tr
+             td #{diary.date}
+             td #{diary.step}
+

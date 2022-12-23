@@ -5,8 +5,7 @@ const Step = sequelize.define(
   'step',
   {    
     diaryId: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
+    type: DataTypes.UUID,
     primaryKey: true
     },
     step: {

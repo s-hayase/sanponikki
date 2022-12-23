@@ -16,10 +16,10 @@ const Step = require('./models/step');
 User.sync().then(async () => {
   Diary.belongsTo(User, {foreignKey: 'userId'});
   Diary.sync();
-  Content.belongsTo(Diary, {foreignKey: 'diaryId'});
-  Content.sync();
-  Step.belongsTo(Diary, {foreignKey: 'diaryId'});
-  Step.sync();
+  // Content.belongsTo(Diary, {foreignKey: 'diaryId'});
+  // Content.sync();
+  // Step.belongsTo(Diary, {foreignKey: 'diaryId'});
+  // Step.sync();
 });
 
 
@@ -46,8 +46,9 @@ function (accessToken, refreshToken, profile, done) {
   process.nextTick(async function () {
     await User.upsert({
       userId: profile.id,
-      username: profile.username
+      username: profile.displayName
     });
+    User.sync();
     done(null, profile);
   });
 }
@@ -57,10 +58,10 @@ app.use(session({ secret: 'e55be81b307c1c09', resave: false, saveUninitialized: 
 app.use(passport.initialize());
 app.use(passport.session());
 
-var indexRouter = require('./routes/index');
+const indexRouter = require('./routes/index');
 const loginRouter = require('./routes/login');
 const logoutRouter = require('./routes/logout');
-
+const usersRouter = require('./routes/users');
 
 
 // view engine setup
@@ -76,6 +77,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
+app.use('/users', usersRouter);
 
 app.get('/auth/twitter', passport.authenticate('twitter'));
 app.get('/auth/twitter/callback', 

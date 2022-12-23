@@ -2,7 +2,7 @@
 const {sequelize, DataTypes} = require('./sequelize-loader');
 
 const User = sequelize.define(
-  'users',
+  'user',
   {
     userId: {
       type: DataTypes.BIGINT,

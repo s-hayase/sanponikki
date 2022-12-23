@@ -5,8 +5,7 @@ const Content = sequelize.define(
   'content',
   {
     diaryId: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
+      type: DataTypes.UUID,
       primaryKey: true
       },
     text: {
