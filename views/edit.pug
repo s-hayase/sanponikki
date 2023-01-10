@@ -1,0 +1,19 @@
+extends layout
+
+block content
+  h3 編集
+  form(method="post", action=`/diaries/${diaries.diaryId}?edit=1`)
+    div
+      h5 既存の日付  #{diaries.date}
+      p 編集
+      input(type="date" name="date")
+    div
+      h5 既存の歩数  #{diaries.step}
+      p 編集
+      input(type="number" name="step")
+    div
+      h5 既存の日記  #{diaries.text}
+      p 編集
+      textarea(name="text")
+    div
+      button(type="submit") 以上の内容で予定を編集する

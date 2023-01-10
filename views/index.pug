@@ -6,7 +6,8 @@ block content
   if user
      p 現在 #{user.displayName} でログイン中
      div
-       a(href="/users") マイページ
+       ul
+         li: a(href="/users") マイページ
   else
      div
        a(href="/login") ログイン

@@ -14,8 +14,10 @@ block content
          tr
            th 日時
            th 歩数
+           th 日記
          each diary in diaries
            tr
              td #{diary.date}
              td #{diary.step}
-
+             td #{diary.text}
+             td: a(href=`/users/diaries/${diary.diaryId}/edit`) 編集する

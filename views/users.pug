@@ -1,11 +1,14 @@
 extends layout
 
 block content
-  form(method="post", action="/users/diaries")
-    div
-      h5 歩数
-      input(type="number" name="step")
-    div
-      h5 日記
-      textarea(name="diarytext")
-    button(type="submit") 日記を投稿する
+  h1= title
+  p Welcome to #{title}
+  if user
+     p 現在 #{user.displayName} でログイン中
+     div
+       ul
+         li: a(href="/users/diaries") 日記一覧
+         li: a(href="/users/new") 日記投稿
+  else
+     div
+       a(href="/login") ログイン

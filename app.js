@@ -9,9 +9,7 @@ const passport = require('passport');
 
 // モデルの読み込み
 const User = require('./models/user');
-const Content = require('./models/content');
 const Diary = require('./models/diary');
-const Step = require('./models/step');
 
 User.sync().then(async () => {
   Diary.belongsTo(User, {foreignKey: 'userId'});
