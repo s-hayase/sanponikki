@@ -24,6 +24,10 @@ const Diary = sequelize.define(
     text: {
       type: DataTypes.TEXT,
       allowNull: false
+    },
+    updatedAt:{
+      type: DataTypes.DATE,
+      allowNull: false
     }
   },
   {

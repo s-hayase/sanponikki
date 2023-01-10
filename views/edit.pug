@@ -2,7 +2,7 @@ extends layout
 
 block content
   h3 編集
-  form(method="post", action=`/diaries/${diaries.diaryId}?edit=1`)
+  form(method="post", action=`/users/diaries/${diaries.diaryId}?edit=1`)
     div
       h5 既存の日付  #{diaries.date}
       p 編集

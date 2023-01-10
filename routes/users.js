@@ -19,10 +19,11 @@ router.post('/diaries', authenticationEnsurer, async (req, res, next) => {
   const createdAt = new Date();
   const diary = await Diary.create({
     diaryId: diaryId,
-    date: createdAt,
+    date: req.body.date,
     userId: req.user.id,
     text: req.body.diarytext,
-    step: req.body.step
+    step: req.body.step,
+    updatedAt: createdAt
   });
   res.redirect('/users');
 });
@@ -84,5 +85,28 @@ router.get('/diaries/:diaryId/edit', authenticationEnsurer, async (req, res, nex
 function isMine(req, schedule) {
   return schedule && parseInt(schedule.createdBy) === parseInt(req.user.id);
 }
+
+router.post('/diaries/:diaryId', authenticationEnsurer, async (req, res, next) => {
+  let diaries = await Diary.findOne({
+    where: {
+      diaryId: req.params.diaryId
+    }
+  });
+  if (parseInt(req.query.edit) === 1) {
+    const updatedAt = new Date();
+    diaries = await diaries.update({
+      diaryId: diaries.diaryId,
+      step: req.body.step,
+      text: req.body.text,
+      userId: req.user.id,
+      updatedAt: updatedAt
+    });
+    res.redirect(`/users/diaries`);
+  } else {
+    const err = new Error('指定された予定がない、または、編集する権限がありません');
+    err.status = 404;
+    next(err);
+  }
+});
 
 module.exports = router;
