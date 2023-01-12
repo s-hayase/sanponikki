@@ -1,15 +1,20 @@
 extends layout
 
 block content
-  p= err 
-  form(method="post", action="/users/diaries")
-    div
-      h5 日付
-      input(type="date" name="date")
-    div
-      h5 歩数
-      input(type="number" name="step")
-    div
-      h5 日記
-      textarea(name="diarytext")
-    button(type="submit") 日記を投稿する
+  if err
+    p= err
+      ul
+        li: a(href="/users/diaries") 日記一覧
+        li: a(href="/users/new") 日記投稿
+  else
+    form(method="post", action="/users/diaries")
+      div
+        h5 日付
+        input(type="date" name="date")
+      div
+        h5 歩数
+        input(type="number" name="step")
+      div
+        h5 日記
+        textarea(name="diarytext")
+      button(type="submit") 日記を投稿する
