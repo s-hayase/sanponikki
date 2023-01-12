@@ -1,6 +1,7 @@
 extends layout
 
 block content
+  p= err 
   form(method="post", action="/users/diaries")
     div
       h5 日付

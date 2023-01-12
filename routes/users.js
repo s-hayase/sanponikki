@@ -15,17 +15,36 @@ router.get('/new', function (req, res, next) {
 });
 
 router.post('/diaries', authenticationEnsurer, async (req, res, next) => {
-  const diaryId = uuidv4();
-  const createdAt = new Date();
-  const diary = await Diary.create({
-    diaryId: diaryId,
-    date: req.body.date,
-    userId: req.user.id,
-    text: req.body.diarytext,
-    step: req.body.step,
-    updatedAt: createdAt
+  const diaries = await Diary.findAll({
+    include: [
+      {
+        model: User,
+        attributes: ['userId']
+      }],
+    where: {
+      userId: req.user.id,
+      date: req.body.date
+    },
+    order: [['date', 'DESC']]
   });
-  res.redirect('/users');
+  if (!diaries) {
+    const diaryId = uuidv4();
+    const createdAt = new Date();
+    const diary = await Diary.create({
+      diaryId: diaryId,
+      date: req.body.date,
+      userId: req.user.id,
+      text: req.body.diarytext,
+      step: req.body.step,
+      updatedAt: createdAt
+    });
+    res.redirect('/users');
+  } else {
+    res.render('new', {
+      title: 'sanpo nikki',
+      user: req.user,
+      err: `すでに${req.body.date}の日記は存在しています` });
+  }
 });
 
 router.get('/diaries', authenticationEnsurer, async (req, res, next) => {
@@ -40,7 +59,6 @@ router.get('/diaries', authenticationEnsurer, async (req, res, next) => {
     },
     order: [['date', 'DESC']]
   });
-  console.info(diaries.length);
   if (diaries) {
     res.render('diary', {
       title: "sanpo nikki",
