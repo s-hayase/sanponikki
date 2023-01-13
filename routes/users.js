@@ -27,7 +27,8 @@ router.post('/diaries', authenticationEnsurer, async (req, res, next) => {
     },
     order: [['date', 'DESC']]
   });
-  if (!diaries) {
+
+  if (isEmpty(diaries)) {
     const diaryId = uuidv4();
     const createdAt = new Date();
     const diary = await Diary.create({
@@ -47,6 +48,10 @@ router.post('/diaries', authenticationEnsurer, async (req, res, next) => {
     });
   }
 });
+
+function isEmpty(diaries) {
+  return !Object.keys(diaries).length;
+}
 
 router.get('/diaries', authenticationEnsurer, async (req, res, next) => {
   const diaries = await Diary.findAll({
@@ -79,30 +84,21 @@ router.get('/diaries/:diaryId/edit', authenticationEnsurer, async (req, res, nex
       diaryId: req.params.diaryId
     }
   });
-  res.render('edit', {
-    title: "sanpo nikki",
-    user: req.user,
-    diaries: diaries,
-  });
-  // if (isMine(req, schedule)) { // 作成者のみが編集フォームを開ける
-  //   const candidates = await Candidate.findAll({
-  //     where: { scheduleId: schedule.scheduleId },
-  //     order: [['candidateId', 'ASC']]
-  //   });
-  //   res.render('edit', {
-  //     user: req.user,
-  //     schedule: schedule,
-  //     candidates: candidates
-  //   });
-  // } else {
-  //   const err = new Error('指定された予定がない、または、予定する権限がありません');
-  //   err.status = 404;
-  //   next(err);
-  // }
+  if (isMine(req, diaries)) {
+    res.render('edit', {
+      title: "sanpo nikki",
+      user: req.user,
+      diaries: diaries,
+    });
+  } else {
+    const err = new Error('指定された予定がない、または、予定する権限がありません');
+    err.status = 404;
+    next(err);
+  }
 });
 
-function isMine(req, schedule) {
-  return schedule && parseInt(schedule.createdBy) === parseInt(req.user.id);
+function isMine(req, diaries) {
+  return diaries && parseInt(diaries.userId) === parseInt(req.user.id);
 }
 
 router.post('/diaries/:diaryId', authenticationEnsurer, async (req, res, next) => {
@@ -113,31 +109,13 @@ router.post('/diaries/:diaryId', authenticationEnsurer, async (req, res, next) =
         diaryId: req.params.diaryId
       }
     });
-    const existDiaries = await Diary.findOne({
-      include: [
-        {
-          model: User,
-          attributes: ['userId']
-        }],
-      where: {
-        date: diaries.date
-      },
-    });
-    if (diaries.date !== existDiaries.date) {
-      const updatedAt = new Date();
-      diaries = await diaries.update({
-        diaryId: diaries.diaryId,
-        step: req.body.step,
-        text: req.body.text,
-        userId: req.user.id,
-        updatedAt: updatedAt
-      });
-      res.redirect(`/users/diaries`);
-    } else {
-      const err = new Error('日付が重複しています');
-      err.status = 404;
-      next(err);
-    }
+        const updatedAt = new Date();
+        diaries = await diaries.update({
+          step: req.body.step,
+          text: req.body.text,
+          updatedAt: updatedAt
+        });
+        res.redirect(`/users/diaries`);
   } else {
     const err = new Error('指定された予定がない、または、編集する権限がありません');
     err.status = 404;
