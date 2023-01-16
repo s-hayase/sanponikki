@@ -109,18 +109,26 @@ router.post('/diaries/:diaryId', authenticationEnsurer, async (req, res, next) =
         diaryId: req.params.diaryId
       }
     });
-        const updatedAt = new Date();
-        diaries = await diaries.update({
-          step: req.body.step,
-          text: req.body.text,
-          updatedAt: updatedAt
-        });
-        res.redirect(`/users/diaries`);
+    const updatedAt = new Date();
+    diaries = await diaries.update({
+      step: req.body.step,
+      text: req.body.text,
+      updatedAt: updatedAt
+    });
+    res.redirect(`/users/diaries`);
+  } else if (parseInt(req.query.delete) === 1) {
+    await deleteDiaryAggregate(req.params.diaryId);
+    res.redirect('/users/diaries');
   } else {
     const err = new Error('指定された予定がない、または、編集する権限がありません');
     err.status = 404;
     next(err);
   }
 });
+
+async function deleteDiaryAggregate(diaryId) {
+  const diaries = await Diary.findByPk(diaryId);
+  await diaries.destroy();
+}
 
 module.exports = router;
