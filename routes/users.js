@@ -63,7 +63,7 @@ router.get('/diaries', authenticationEnsurer, async (req, res, next) => {
     where: {
       userId: req.user.id
     },
-    order: [['date', 'DESC']]
+    order: [['date', 'ASC']]
   });
   if (diaries) {
     res.render('diary', {
