@@ -78,9 +78,17 @@ app.use('/logout', logoutRouter);
 app.use('/diaries', diariesRouter);
 
 app.get('/auth/twitter', passport.authenticate('twitter'));
-app.get('/auth/twitter/callback', 
-  passport.authenticate('twitter', { successRedirect: '/',
-                                     failureRedirect: '/login' }));
+app.get('/auth/twitter/callback', passport.authenticate('twitter', { failureRedirect: '/login' }),
+  function (req, res) {
+    const loginFrom = req.cookies.loginFrom;
+    if (loginFrom &&
+      loginFrom.startsWith('/')) {
+      res.clearCookie('loginFrom');
+      res.redirect(loginFrom);
+    } else {
+      res.redirect('/');
+    }
+  });
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
