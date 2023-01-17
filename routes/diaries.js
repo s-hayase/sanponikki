@@ -4,17 +4,14 @@ const authenticationEnsurer = require('./authentication-ensurer');
 const { v4: uuidv4 } = require('uuid');
 const Diary = require('../models/diary');
 const User = require('../models/user');
-
-/* GET users listing. */
-router.get('/', authenticationEnsurer,function (req, res, next) {
-  res.render('users', { title: 'sanpo nikki', user: req.user });
-});
+const csrf = require('csurf');
+const csrfProtection = csrf({ cookie: true });
 
 router.get('/new', authenticationEnsurer, function (req, res, next) {
   res.render('new', { title: 'sanpo nikki', user: req.user });
 });
 
-router.post('/diaries', authenticationEnsurer, async (req, res, next) => {
+router.post('/', authenticationEnsurer, async (req, res, next) => {
   const diaries = await Diary.findAll({
     include: [
       {
@@ -39,7 +36,7 @@ router.post('/diaries', authenticationEnsurer, async (req, res, next) => {
       step: req.body.step,
       updatedAt: createdAt
     });
-    res.redirect('/users/diaries');
+    res.redirect('/diaries');
   } else {
     res.render('new', {
       title: 'sanpo nikki',
@@ -53,7 +50,7 @@ function isEmpty(diaries) {
   return !Object.keys(diaries).length;
 }
 
-router.get('/diaries', authenticationEnsurer, async (req, res, next) => {
+router.get('/', authenticationEnsurer, async (req, res, next) => {
   const diaries = await Diary.findAll({
     include: [
       {
@@ -78,7 +75,7 @@ router.get('/diaries', authenticationEnsurer, async (req, res, next) => {
   }
 });
 
-router.get('/diaries/:diaryId/edit', authenticationEnsurer, async (req, res, next) => {
+router.get('/:diaryId/edit', authenticationEnsurer, async (req, res, next) => {
   const diaries = await Diary.findOne({
     where: {
       diaryId: req.params.diaryId
@@ -101,7 +98,7 @@ function isMine(req, diaries) {
   return diaries && parseInt(diaries.userId) === parseInt(req.user.id);
 }
 
-router.post('/diaries/:diaryId', authenticationEnsurer, async (req, res, next) => {
+router.post('/:diaryId', authenticationEnsurer, async (req, res, next) => {
 
   if (parseInt(req.query.edit) === 1) {
     let diaries = await Diary.findOne({
@@ -115,10 +112,10 @@ router.post('/diaries/:diaryId', authenticationEnsurer, async (req, res, next) =
       text: req.body.text,
       updatedAt: updatedAt
     });
-    res.redirect(`/users/diaries`);
+    res.redirect(`/`);
   } else if (parseInt(req.query.delete) === 1) {
     await deleteDiaryAggregate(req.params.diaryId);
-    res.redirect('/users/diaries');
+    res.redirect('/');
   } else {
     const err = new Error('指定された予定がない、または、編集する権限がありません');
     err.status = 404;

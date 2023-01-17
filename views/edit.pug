@@ -3,7 +3,7 @@ extends layout
 block content
   h3 #{diaries.date}の日記を編集
   div.mx-5
-    form(method="post", action=`/users/diaries/${diaries.diaryId}?edit=1`)
+    form(method="post", action=`/diaries/${diaries.diaryId}?edit=1`)
       - let step = diaries.step
       div.row.gy-3
         div.col-6
@@ -16,5 +16,5 @@ block content
       button(type="submit").btn.btn-primary.my-3 以上の内容で予定を編集する
   h3 危険な変更
   div.mx-3
-    form(method="post", action=`/users/diaries/${diaries.diaryId}?delete=1`)
+    form(method="post", action=`/diaries/${diaries.diaryId}?delete=1`)
       button(type="submit").btn.btn-danger.my-3 この予定を削除する

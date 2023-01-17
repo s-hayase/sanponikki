@@ -59,7 +59,7 @@ app.use(passport.session());
 const indexRouter = require('./routes/index');
 const loginRouter = require('./routes/login');
 const logoutRouter = require('./routes/logout');
-const usersRouter = require('./routes/users');
+const diariesRouter = require('./routes/diaries');
 
 
 // view engine setup
@@ -75,7 +75,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
-app.use('/users', usersRouter);
+app.use('/diaries', diariesRouter);
 
 app.get('/auth/twitter', passport.authenticate('twitter'));
 app.get('/auth/twitter/callback', 

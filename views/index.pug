@@ -2,10 +2,8 @@ extends layout
 
 block content
   if user
-    div.p-5.my-4.bg-light.rounded-3
+    div.p-3.my-1.bg-light.rounded-3
       p 現在 #{user.displayName} でログイン中
-      ul
-        li: a(href="/users") マイページ
     div
     - var hasDiary = diaries.length > 0
     - var i = 1
