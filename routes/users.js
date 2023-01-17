@@ -6,11 +6,11 @@ const Diary = require('../models/diary');
 const User = require('../models/user');
 
 /* GET users listing. */
-router.get('/', function (req, res, next) {
+router.get('/', authenticationEnsurer,function (req, res, next) {
   res.render('users', { title: 'sanpo nikki', user: req.user });
 });
 
-router.get('/new', function (req, res, next) {
+router.get('/new', authenticationEnsurer, function (req, res, next) {
   res.render('new', { title: 'sanpo nikki', user: req.user });
 });
 
@@ -39,7 +39,7 @@ router.post('/diaries', authenticationEnsurer, async (req, res, next) => {
       step: req.body.step,
       updatedAt: createdAt
     });
-    res.redirect('/users');
+    res.redirect('/users/diaries');
   } else {
     res.render('new', {
       title: 'sanpo nikki',

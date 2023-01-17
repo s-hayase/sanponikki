@@ -1,14 +1,13 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
   if user
-     p 現在 #{user.displayName} でログイン中
-     div
-       ul
-         li: a(href="/users/diaries") 日記一覧
-         li: a(href="/users/new") 日記投稿
+    div.p-5.my-4.bg-light.rounded-3
+      p 現在 #{user.displayName} でログイン中
+      ul
+        li: a(href="/") top
+        li: a(href="/users/diaries") 日記一覧
+        li: a(href="/users/new") 日記投稿
   else
      div
        a(href="/login") ログイン

@@ -2,9 +2,9 @@ var express = require('express');
 var router = express.Router();
 const Diary = require('../models/diary');
 const User = require('../models/user');
-
+const authenticationEnsurer = require('./authentication-ensurer');
 /* GET home page. */
-router.get('/', async function(req, res, next) {
+router.get('/', authenticationEnsurer,async (req, res, next)=> {
   const today = new Date().toLocaleDateString();
   const diaries = await Diary.findAndCountAll({
     include: [

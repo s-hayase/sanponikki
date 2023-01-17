@@ -3,18 +3,17 @@ extends layout
 block content
   if err
     p= err
-      ul
-        li: a(href="/users/diaries") 日記一覧
-        li: a(href="/users/new") 日記投稿
   else
-    form(method="post", action="/users/diaries")
-      div
-        h5 日付
-        input(type="date" name="date")
-      div
-        h5 歩数
-        input(type="number" name="step")
-      div
-        h5 日記
-        textarea(name="diarytext")
-      button(type="submit") 日記を投稿する
+    div.mx-5
+        form(method="post", action="/users/diaries")
+          div.row.gy-3
+            div.col-6
+              label.form-label 日付
+              input(type="date" name="date" required).form-control
+            div.col-6
+              label.form-label 歩数
+              input(type="number" name="step" required).form-control
+            div.col-12
+              label.form-label 日記
+              textarea(name="diarytext" required).form-control
+          button(type="submit").btn.btn-primary.my-3 日記を投稿する

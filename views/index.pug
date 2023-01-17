@@ -1,18 +1,19 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
   if user
-    p 現在 #{user.displayName} でログイン中
+    div.p-5.my-4.bg-light.rounded-3
+      p 現在 #{user.displayName} でログイン中
+      ul
+        li: a(href="/users") マイページ
     div
     - var hasDiary = diaries.length > 0
     - var i = 1
     if hasDiary
       h3 #{today}の歩いた人ランキングトップ10！
-      table.table
+      table.table.table-striped
         tr
-          th 
+          th 順位
           th ユーザー名
           th 歩数
         each diary in diaries
@@ -22,8 +23,9 @@ block content
             td #{diary.step}
             - i = i + 1
     div
-      ul
-        li: a(href="/users") マイページ
   else
-     div
-       a(href="/login") ログイン
+    div.d-flex.w-100.h-100.p-3.mx-auto.flex-column.text-center
+      h5.lead さんぽにっきにtwitterでログイン
+      a(href="/auth/twitter")
+        button.btn.btn-lg.btn-secondary.fw-bold.border-white.bg-info twitterでログイン
+
