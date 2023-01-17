@@ -7,11 +7,11 @@ const User = require('../models/user');
 const csrf = require('csurf');
 const csrfProtection = csrf({ cookie: true });
 
-router.get('/new', authenticationEnsurer, function (req, res, next) {
-  res.render('new', { title: 'sanpo nikki', user: req.user });
+router.get('/new', authenticationEnsurer,csrfProtection , function (req, res, next) {
+  res.render('new', { title: 'sanpo nikki', user: req.user ,csrfToken: req.csrfToken()});
 });
 
-router.post('/', authenticationEnsurer, async (req, res, next) => {
+router.post('/', authenticationEnsurer,csrfProtection, async (req, res, next) => {
   const diaries = await Diary.findAll({
     include: [
       {
@@ -39,7 +39,6 @@ router.post('/', authenticationEnsurer, async (req, res, next) => {
     res.redirect('/diaries');
   } else {
     res.render('new', {
-      title: 'sanpo nikki',
       user: req.user,
       err: `すでに${req.body.date}の日記は存在しています`
     });
@@ -64,7 +63,6 @@ router.get('/', authenticationEnsurer, async (req, res, next) => {
   });
   if (diaries) {
     res.render('diary', {
-      title: "sanpo nikki",
       user: req.user,
       diaries: diaries,
     });
@@ -75,7 +73,7 @@ router.get('/', authenticationEnsurer, async (req, res, next) => {
   }
 });
 
-router.get('/:diaryId/edit', authenticationEnsurer, async (req, res, next) => {
+router.get('/:diaryId/edit', authenticationEnsurer,csrfProtection ,  async (req, res, next) => {
   const diaries = await Diary.findOne({
     where: {
       diaryId: req.params.diaryId
@@ -83,9 +81,9 @@ router.get('/:diaryId/edit', authenticationEnsurer, async (req, res, next) => {
   });
   if (isMine(req, diaries)) {
     res.render('edit', {
-      title: "sanpo nikki",
       user: req.user,
       diaries: diaries,
+      csrfToken: req.csrfToken()
     });
   } else {
     const err = new Error('指定された予定がない、または、予定する権限がありません');
@@ -98,7 +96,7 @@ function isMine(req, diaries) {
   return diaries && parseInt(diaries.userId) === parseInt(req.user.id);
 }
 
-router.post('/:diaryId', authenticationEnsurer, async (req, res, next) => {
+router.post('/:diaryId', authenticationEnsurer,csrfProtection, async (req, res, next) => {
 
   if (parseInt(req.query.edit) === 1) {
     let diaries = await Diary.findOne({
@@ -112,10 +110,10 @@ router.post('/:diaryId', authenticationEnsurer, async (req, res, next) => {
       text: req.body.text,
       updatedAt: updatedAt
     });
-    res.redirect(`/`);
+    res.redirect(`/diaries`);
   } else if (parseInt(req.query.delete) === 1) {
     await deleteDiaryAggregate(req.params.diaryId);
-    res.redirect('/');
+    res.redirect('/diaries');
   } else {
     const err = new Error('指定された予定がない、または、編集する権限がありません');
     err.status = 404;

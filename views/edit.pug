@@ -4,6 +4,7 @@ block content
   h3 #{diaries.date}の日記を編集
   div.mx-5
     form(method="post", action=`/diaries/${diaries.diaryId}?edit=1`)
+      input(type="hidden" name="_csrf" value!=csrfToken)
       - let step = diaries.step
       div.row.gy-3
         div.col-6
@@ -17,4 +18,5 @@ block content
   h3 危険な変更
   div.mx-3
     form(method="post", action=`/diaries/${diaries.diaryId}?delete=1`)
+      input(type="hidden" name="_csrf" value!=csrfToken)
       button(type="submit").btn.btn-danger.my-3 この予定を削除する

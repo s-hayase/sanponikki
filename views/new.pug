@@ -6,6 +6,7 @@ block content
   else
     div.mx-5
         form(method="post", action="/diaries")
+          input(type="hidden" name="_csrf" value!=csrfToken)
           div.row.gy-3
             div.col-6
               label.form-label 日付
